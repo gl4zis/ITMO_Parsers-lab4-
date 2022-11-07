@@ -21,6 +21,7 @@ def JSONtoYAML(JSONfile, YAMLfile):
     value = None
     arrlevel = math.inf
     startline = ''
+    error = False
     for i in JSON:
 
         YAMLline = ''
@@ -54,6 +55,13 @@ def JSONtoYAML(JSONfile, YAMLfile):
                 value = None
         else:
             value = line.replace('\",', '').replace('\"', '')
+            if '\"' not in line:
+                value = value.replace(',', '')
+                try: float(value)
+                except: 
+                    if value != 'true' and value != 'false':
+                        value = None
+                        error = True
             if value == '':
                 value = "\'\'"
         if type(value) == str:
@@ -68,6 +76,9 @@ def JSONtoYAML(JSONfile, YAMLfile):
                 YAMLline += ' '+value
         if YAMLline != '':
             YAML.append(YAMLline+'\n')
+            
+    if error:
+        print('----ERROR: WRONG JSON!!!-----')
 
     with open(YAMLfile, 'w', encoding='utf-8') as newFile:
         newFile.writelines(YAML)  
